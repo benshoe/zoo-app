@@ -1,24 +1,3 @@
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-
-// AssignmentApplication class.
-// Used as driver class, in accordance with instructions.
-public class AssignmentApplication {
-
-  public static void main(String[] args) {
-
-    ZooEditor z = new ZooEditor();
-
-  }
-
-} // end class AssignmentApplication
-
-/*
- *   Zoo management GUI
- */
-
 class ZooEditor {
   // main window and its size
   private JFrame f;
@@ -28,7 +7,7 @@ class ZooEditor {
   //private ArrayList<Animal> inhabitants;
   private int selectedAnimal; // should point to item in list
   // instead of ArrayList<Animal> inhabitants:
-  DefaultListModel inhabitants;
+  DefaultListModel<Animal> inhabitants;
 
   public ZooEditor () {
     // set up data structures
@@ -44,7 +23,7 @@ class ZooEditor {
     //inhabitants.add(new Bird("Foo","Bar"));
 
     /// better Alternative? Eases listing using JList -> animalChooserPanel()
-    inhabitants = new DefaultListModel();
+    inhabitants = new DefaultListModel<Animal>();
     inhabitants.addElement( new Mammal("Human","Ben") );
     inhabitants.addElement( new Mammal("Human","Chris") );
     inhabitants.addElement( new Mammal("Human","Jan") );
@@ -98,7 +77,7 @@ class ZooEditor {
     p.add( new JLabel("Select animal...", JLabel.CENTER) );
     // USE THIS??? :
     // https://docs.oracle.com/javase/tutorial/uiswing/components/list.html
-    JList l = new JList(inhabitants);
+    JList l = new JList<Animal>(inhabitants);
     l.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     JScrollPane listScroller = new JScrollPane(l);
     p.add(listScroller);
@@ -124,113 +103,4 @@ class ZooEditor {
     return p;
   }
 
-}
-
-class NewAnimalButtonListener implements ActionListener {
-  private DefaultListModel list;
-  public NewAnimalButtonListener(DefaultListModel l) {
-    list = l;
-  }
-  public void actionPerformed(ActionEvent e) {
-      System.out.println("ADD NEW pressed...");
-      // should add new item to inhabitants
-      // FIXME:
-      // how to add yet-type-undefined Animal if it's abstract? :-(
-      list.addElement( new Mammal("UNDEFINED","UGLY") );
-  }
-}
-
-class UpdateAnimalButtonListener implements ActionListener {
-  public void actionPerformed(ActionEvent e) {
-      System.out.println("UPDATE pressed...");
-  }
-}
-
-/*
- *   Animal: abstract super class
- */
-
-abstract class Animal {
-  // does each animal have it's own JFrame "display logic"?
-  //protected String clade; // https://en.wikipedia.org/wiki/Clade ??
-  private String[] species = {"undefined","Mamal","Bird","Reptile"};
-  public enum Species {
-    UNDEFINED ("Please select species"),
-    MAMMAL    ("Mammal"),
-    BIRD      ("Bird"),
-    REPTILE   ("Reptile"),
-    INSECT    ("Insect");
-
-    private /* ???? */ String speciesName;
-
-    Species(String name) {
-      speciesName = name;
-    }
-  }
-  private Species animalSpecies;
-  private String type;  // Animal type -- tiger, ostrich etc
-  private String name;  // Animal name -- john, jack, jim ... ?
-
-  public Animal (Species s) {
-    System.out.println("Animal constructor called, species: "+ s.speciesName);
-    animalSpecies = s;
-  }
-
-  public void setType(String t) {
-    System.out.println("Setting type to "+t);
-    type = t;
-  }
-
-  public String getType() {
-    return type;
-  }
-
-  public void setName(String n) {
-    System.out.println("Setting name to "+n);
-    name = n;
-  }
-
-  public String getName(String n) {
-    return name;
-  }
-
-  public String toString() {
-    // this will be used in animal list view!
-    return animalSpecies+": "+name;
-  }
-
-}
-
-/*
- *   Species: Inheriting common Animal properties
- */
-
-class Mammal extends Animal {
-  public Mammal() {
-    super(Animal.Species.MAMMAL);
-    System.out.println("New Mammal created of undefined type, unnamed yet.");
-  }
-  public Mammal(String artName, String givenName) {
-    super(Animal.Species.MAMMAL);
-    setType(artName);
-    setName(givenName);
-    System.out.println("New Mammal created of type "+artName+", given name: "+givenName);
-  }
-
-  // interface should enforce us to provide something like:
-  // public JFrame speciesSpecificEditorPanel ???
-}
-
-class Bird extends Animal {
-  private double wingSpan;
-  public Bird() {
-    super(Animal.Species.BIRD);
-  }
-}
-
-class Reptile extends Animal {
-  private int footCount;
-  public Reptile() {
-    super(Animal.Species.REPTILE);
-  }
 }
