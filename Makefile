@@ -3,7 +3,7 @@
 # ZooApplication_ClassSource.java is special,
 # as it imports packages -- thus it must come first here.
 SOURCES = ZooApplication_ClassSource.java \
-	Animal.java   Bird.java Mammal.java Reptile.java \
+	Species.java  Animal.java   Bird.java Mammal.java Reptile.java \
 	NewAnimalButtonListener.java UpdateAnimalButtonListener.java \
 	ZooFrame.java \
 	AnimalListPanel.java
