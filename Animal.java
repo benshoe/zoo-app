@@ -38,7 +38,7 @@ abstract class Animal {
     name = n;
   }
 
-  public String getName(String n) {
+  public String getName() {
     return name;
   }
 

@@ -1,21 +1,25 @@
 
 # List files to be concatenated
-# AssignmentApplication_ClassSource.java is special,
+# ZooApplication_ClassSource.java is special,
 # as it imports packages -- thus it must come first here.
-SOURCES = AssignmentApplication_ClassSource.java Animal.java Bird.java Mammal.java NewAnimalButtonListener.java Reptile.java UpdateAnimalButtonListener.java ZooEditor.java
+SOURCES = ZooApplication_ClassSource.java \
+	Animal.java   Bird.java Mammal.java Reptile.java \
+	NewAnimalButtonListener.java UpdateAnimalButtonListener.java \
+	ZooFrame.java \
+	AnimalListPanel.java
 
 # default target: compile app
-all: AssignmentApplication.class
+all: ZooApplication.class
 
-run: AssignmentApplication.class
-	java AssignmentApplication
+run: ZooApplication.class
+	java ZooApplication
 
-AssignmentApplication.class: AssignmentApplication.java
-	javac -Xlint:unchecked AssignmentApplication.java
+ZooApplication.class: ZooApplication.java
+	javac -Xlint:unchecked ZooApplication.java
 
-# concat SOURCES into AssignmentApplication.java
-AssignmentApplication.java: $(SOURCES)
+# concat SOURCES into ZooApplication.java
+ZooApplication.java: $(SOURCES)
 	cat $(SOURCES) > $@
 
 clean:
-	rm -f *.class AssignmentApplication.java
+	rm -f *.class ZooApplication.java
