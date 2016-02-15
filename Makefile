@@ -1,12 +1,8 @@
 
-# List files to be concatenated
-# ZooApplication_ClassSource.java is special,
-# as it imports packages -- thus it must come first here.
-SOURCES = ZooApplication_ClassSource.java \
-	Species.java  Animal.java   Bird.java Mammal.java Reptile.java \
-	NewAnimalButtonListener.java UpdateAnimalButtonListener.java \
-	ZooFrame.java \
-	AnimalListPanel.java
+# List files to be considered for md5 checksum -- .java files
+SOURCES = $(shell echo *.java)
+# build md5 checksum for .zip file creation
+SOURCEMD5 = $(shell cat *.java | openssl md5)
 
 # default target: compile app
 all: ZooApplication.class
@@ -14,12 +10,20 @@ all: ZooApplication.class
 run: ZooApplication.class
 	java ZooApplication
 
-ZooApplication.class: ZooApplication.java
-	javac -Xlint:unchecked ZooApplication.java
-
-# concat SOURCES into ZooApplication.java
-ZooApplication.java: $(SOURCES)
-	cat $(SOURCES) > $@
+ZooApplication.class:
+	javac -Xlint:all ZooApplication.java
 
 clean:
-	rm -f *.class ZooApplication.java
+	rm -f *.class
+
+# this will create a .zip, named ../<this-FolderName>-<codeCheckSum>.zip
+zip:
+	SelfDir=`basename "$$(pwd)"`; \
+		cd .. ; \
+		zip -x '*.git*' -r $$SelfDir-$(SOURCEMD5).zip $$SelfDir; \
+		echo .zip saved to: ../$$SelfDir-$(SOURCEMD5).zip
+
+# this may only suit me: diff current directory (a git repo
+# containing our sources) against our google drive code base
+diff:
+	diff -u ~/Google\ Drive/Week56-Project/SourceCode .
