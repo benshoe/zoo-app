@@ -39,7 +39,14 @@ class ZooFrame extends JFrame {
 
         tableModel = new AnimalTableModel(animals);
         table = new JTable(tableModel);
+
+        //Implements cell input fields that use a formatted text field
+        //Allows for customised exception handling
+        table.setDefaultEditor(Integer.class, new IntegerEditor());
+
         p.add(new JScrollPane(table));
+
+
 
         p.setVisible(true);
         return p;
@@ -47,10 +54,10 @@ class ZooFrame extends JFrame {
 
     private List<Animal> loadAnimals() {
         List<Animal> animals = new ArrayList<>();
-        animals.add(new Mammal("Chris", 18, "e51"));
-        animals.add(new Bird("Hawk", 8, "k11"));
-        animals.add(new Reptile("Monitor Lizzard", 3, "f31"));
-        animals.add(new Mammal("Elephant", 12, "d57"));
+        animals.add(new Mammal("Human", "Chris", 18, "e51"));
+        animals.add(new Bird("Hawks", "Polly", 8, "k11"));
+        animals.add(new Reptile("Monitor Lizzard", "Rex", 3, "f31"));
+        animals.add(new Mammal("Elephant", "Tiny", 12, "d57"));
         return animals;
     }
 
@@ -78,13 +85,13 @@ class ZooFrame extends JFrame {
                 Animal animal;
                 switch (species) {
                     case Bird:
-                        animal = new Bird("", 0, "");
+                        animal = new Bird("", "", 0, "");
                         break;
                     case Reptile:
-                        animal = new Reptile("", 0, "");
+                        animal = new Reptile("", "", 0, "");
                         break;
                     case Mammal:
-                        animal = new Mammal("", 0, "");
+                        animal = new Mammal("","", 0, "");
                         break;
                     default:
                         throw new IllegalArgumentException("We don't know this species: " + species);

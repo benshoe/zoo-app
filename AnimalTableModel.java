@@ -18,8 +18,6 @@ public class AnimalTableModel extends AbstractTableModel {
 		// adds row to table and returns new row's index (NOTYET)
 		animals.add(a);
 		fireTableRowsInserted(animals.size(), animals.size());
-		//http://stackoverflow.com/questions/3179136/jtable-how-to-refresh-table-model-after-insert-delete-or-update-the-data
-		// http://stackoverflow.com/questions/4392722/how-to-repaint-a-jpanel-after-have-drawn-on-it
 		return animals.size();
 	}
 
@@ -30,7 +28,7 @@ public class AnimalTableModel extends AbstractTableModel {
 
 	@Override
 	public int getColumnCount() {
-		return 4;
+		return 5;
 	}
 
 	@Override
@@ -39,10 +37,12 @@ public class AnimalTableModel extends AbstractTableModel {
 			case 0:
 				return "Species";
 			case 1:
-				return "Name";
+				return "Type";
 			case 2:
-				return "Age (Years)";
+				return "Name";
 			case 3:
+				return "Age (Years)";
+			case 4:
 				return "Enclosure (No.)";
 			default:
 				throw new IllegalArgumentException("We don't have columnIndex of " + columnIndex);
@@ -54,10 +54,12 @@ public class AnimalTableModel extends AbstractTableModel {
 		switch(columnIndex) {
 			case 0:
 			case 1:
-			case 3:
-				return String.class;
 			case 2:
+				return String.class;
+			case 3:
 				return Integer.class;
+			case 4:
+				return String.class;
 			default:
 				throw new IllegalArgumentException("We don't support columns > 3");
 		}
@@ -75,10 +77,12 @@ public class AnimalTableModel extends AbstractTableModel {
 			case 0:
 				return animal.getSpecies();
 			case 1:
-				return animal.getName();
+				return animal.getType();
 			case 2:
-				return animal.getAge();
+				return animal.getName();
 			case 3:
+				return animal.getAge();
+			case 4:
 				return animal.getEnclosure();
 			default:
 				throw new IllegalArgumentException("We don't support columns > 3");
@@ -92,12 +96,15 @@ public class AnimalTableModel extends AbstractTableModel {
 			case 0:
 				break;
 			case 1:
-				animal.setName((String) aValue);
+				animal.setType((String) aValue);
 				break;
 			case 2:
-				animal.setAge((Integer) aValue);
+				animal.setName((String) aValue);
 				break;
 			case 3:
+				animal.setAge((Integer) aValue);
+				break;
+			case 4:
 				animal.setEnclosure((String) aValue);
 				break;
 			default:
