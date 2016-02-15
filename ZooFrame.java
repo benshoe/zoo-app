@@ -1,11 +1,17 @@
-/* imports moved to ZooApplication to aid concatenation for submission; jan */
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.*;
+import java.util.List;
 
 /**
  * Created by ben on 10-02-16.
  */
-////// Originally, by ben: public
-////// dropped by jan, only to make it compilable in a concatenated file :(
 class ZooFrame extends JFrame {
+
+    private AnimalTableModel tableModel;
+    private JTable table;
+    private JPanel animalListPanel;
 
     public ZooFrame() {
         super("Zoo Application");
@@ -14,52 +20,37 @@ class ZooFrame extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLookAndFeel();
 
-        add(new JLabel("Zoo", JLabel.CENTER), BorderLayout.NORTH );
-        add(new JLabel("Editor", JLabel.CENTER), BorderLayout.CENTER );
-
         List<Animal> animals = loadAnimals();
-        DefaultListModel<Animal> defaultListModel = new DefaultListModel<>();
-        animals.forEach(defaultListModel::addElement);
+        animalListPanel = getAnimalListPanel(animals);
+        add(animalListPanel, BorderLayout.CENTER);
 
-        JPanel animalListPanel = getAnimalListPanel(defaultListModel);
-        add(animalListPanel);
+        // add button at window bottom
+        add(buttonNew(), BorderLayout.PAGE_END);
+
         setVisible(true);
+
     }
 
-    private JPanel getAnimalListPanel(DefaultListModel<Animal> defaultListModel) {
-        JPanel p = new JPanel(new GridLayout(2,1));
+    private JPanel getAnimalListPanel(List<Animal> animals) {
+        JPanel p = new JPanel(new GridLayout(1,1)); // just take up all space
+
         DefaultListCellRenderer renderer = new DefaultListCellRenderer();
-        renderer.add("knop", new JButton());
         renderer.setVisible(true);
-        p.setLayout(new GridLayout(3, 1));
-        p.add( new JLabel("Select animal...", JLabel.CENTER) );
-        TableModel tableModel = new AnimalTableModel(loadAnimals());
-        JTable table = new JTable(tableModel);
+
+        tableModel = new AnimalTableModel(animals);
+        table = new JTable(tableModel);
         p.add(new JScrollPane(table));
-        JList<Animal> l = new JList<>(defaultListModel);
-        l.setCellRenderer(new MyCellRenderer());
-        l.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        JScrollPane listScroller = new JScrollPane(l);
-        p.add(listScroller);
+
         p.setVisible(true);
         return p;
     }
 
-    class MyCellRenderer extends JLabel implements ListCellRenderer<Animal> {
-
-        @Override
-        public Component getListCellRendererComponent(JList<? extends Animal> list, Animal value, int index, boolean isSelected, boolean cellHasFocus) {
-            setText(value.getName() + ": " + value.getType());
-            return this;
-        }
-    }
-
     private List<Animal> loadAnimals() {
         List<Animal> animals = new ArrayList<>();
-        animals.add(new Mammal("Tiger", "Baboo"));
-        animals.add(new Bird());
-        animals.add(new Reptile());
-        animals.add(new Mammal("Elephant", "Dumbo"));
+        animals.add(new Mammal("Chris", 18, "e51"));
+        animals.add(new Bird("Hawk", 8, "k11"));
+        animals.add(new Reptile("Monitor Lizzard", 3, "f31"));
+        animals.add(new Mammal("Elephant", 12, "d57"));
         return animals;
     }
 
@@ -68,95 +59,39 @@ class ZooFrame extends JFrame {
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
             SwingUtilities.updateComponentTreeUI(this);
         } catch (Exception e) {
-            System.out.println("Couln not load look and feel " + e);
+            System.out.println("Could not load look and feel " + e);
         }
     }
 
-    private class AnimalTableModel implements TableModel {
-        private List<Animal> m_animals;
-        public AnimalTableModel(List<Animal> animals) {
-            m_animals = animals;
-        }
-
-        @Override
-        public int getRowCount() {
-            return m_animals.size();
-        }
-
-        @Override
-        public int getColumnCount() {
-            return 4;
-        }
-
-        @Override
-        public String getColumnName(int columnIndex) {
-            switch (columnIndex) {
-                case 0:
-                    return "Species";
-                case 1:
-                    return "Name";
-                case 2:
-                    return "Total";
-                case 3:
-                    return "Enclosure";
-                default:
-                    throw new IllegalArgumentException("We don't have columnIndex of " + columnIndex);
+    private JButton buttonNew() {
+        // add new item to ArrayList<Animals>, show editor
+        JButton button = new JButton("Add new...");
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("ADD NEW pressed..." + tableModel);
+                Animal.Species species = (Animal.Species) JOptionPane.showInputDialog(ZooFrame.this, "Select species", "New animal", JOptionPane.PLAIN_MESSAGE, null, Animal.Species.values(), null);
+                if(species == null) { // This happens when the user clicks on 'Cancel'
+                    return;
+                }
+                System.out.println("Adding new animal with species: " + species);
+                Animal animal;
+                switch (species) {
+                    case Bird:
+                        animal = new Bird("", 0, "");
+                        break;
+                    case Reptile:
+                        animal = new Reptile("", 0, "");
+                        break;
+                    case Mammal:
+                        animal = new Mammal("", 0, "");
+                        break;
+                    default:
+                        throw new IllegalArgumentException("We don't know this species: " + species);
+                }
+                tableModel.addRow( animal );
             }
-        }
-
-        @Override
-        public Class<?> getColumnClass(int columnIndex) {
-            return String.class;
-        }
-
-        @Override
-        public boolean isCellEditable(int rowIndex, int columnIndex) {
-            return columnIndex > 0;
-        }
-
-        @Override
-        public Object getValueAt(int rowIndex, int columnIndex) {
-            Animal animal = m_animals.get(rowIndex);
-            switch(columnIndex) {
-                case 0:
-                    return animal.getType();
-                case 1:
-                    return animal.getName();
-                case 2:
-                    return animal.toString();
-                case 3:
-                    return animal.getType() + ": " + animal.getName();
-                default:
-                    throw new IllegalArgumentException("We don't support columns > 3");
-            }
-        }
-
-        @Override
-        public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-            Animal animal = m_animals.get(rowIndex);
-            switch (columnIndex) {
-                case 0:
-                    animal.setType((String) aValue);
-                    break;
-                case 1:
-                    animal.setName((String) aValue);
-                    break;
-                case 2:
-                case 3:
-                    break;
-                default:
-                    throw new IllegalArgumentException("We don't support columns > 3");
-            }
-        }
-
-        @Override
-        public void addTableModelListener(TableModelListener l) {
-
-        }
-
-        @Override
-        public void removeTableModelListener(TableModelListener l) {
-
-        }
+        });
+        return button;
     }
 }

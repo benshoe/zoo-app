@@ -1,0 +1,4 @@
+I changed the method buttonNew() in  ZooFrame.java:
+- this now shows an input dialog with the Animal.Species in it
+- after selecting a species, an animal of that species is added to the list.
+
